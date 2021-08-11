@@ -30,14 +30,30 @@ public class ForthEvaluator
             if (data.equals(":"))
             {
                 userInstruction = true;
-            }
-            else if (userInstruction)
+            } else if (userInstruction)
             {
 
             }
         }
 
     }
+
+    public void processUserInstructions(String aLine)
+    {
+        Scanner aScan = new Scanner(aLine);
+
+        while (aScan.hasNext())
+        {
+            String aWord = aScan.next();
+
+            if ((!aWord.equals(";")) && !(aWord.equals(":")))
+            {
+                this.userInstructions.push(aWord);
+            }
+        }
+
+    }
+
 
     public interface processLineFunction
     {

@@ -22,8 +22,9 @@ public class ForthEvaluator
     {
         Scanner aScan = new Scanner(aLine);
         boolean userInstruction = false;
+        boolean done = false;
 
-        while (aScan.hasNext())
+        while (aScan.hasNext() && !done)
         {
             String data = aScan.next();
 
@@ -32,13 +33,21 @@ public class ForthEvaluator
                 userInstruction = true;
             } else if (userInstruction)
             {
+                checkWord someChecker = (String someWord) -> (!someWord.equals(";") && !someWord.equals(":"));
 
+                process(aLine, someChecker, userInstructions);
+                done = true;
+            } else
+            {
+                checkWord someChecker = (String someWord) -> (true);
+                process(aLine, someChecker, integers);
+                done = true;
             }
         }
 
     }
 
-    public void processUserInstructions(String aLine)
+    public void process(String aLine, checkWord aChecker, Stack aStack)
     {
         Scanner aScan = new Scanner(aLine);
 
@@ -46,18 +55,17 @@ public class ForthEvaluator
         {
             String aWord = aScan.next();
 
-            if ((!aWord.equals(";")) && !(aWord.equals(":")))
+            if (aChecker.processLine(aWord))
             {
-                this.userInstructions.push(aWord);
+                aStack.push(aWord);
             }
         }
-
     }
 
 
-    public interface processLineFunction
+    public interface checkWord
     {
-        void processLine(String aLine);
+        boolean processLine(String aLine);
     }
 
     public List evaluateProgram(List aList)
@@ -66,16 +74,15 @@ public class ForthEvaluator
 
         for (Object aLine : aList)
         {
+            //TODO Must implement parser for regular instructions
             String line = (String) aLine;
             parser(line);
         }
 
         //Scanner aScan = new Scanner(aList);
 
-
         return answer;
     }
-
 
 }
 

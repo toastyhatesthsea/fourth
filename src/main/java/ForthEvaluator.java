@@ -1,7 +1,6 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Stack;
+import javax.naming.PartialResultException;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class ForthEvaluator
 {
@@ -9,6 +8,9 @@ public class ForthEvaluator
     public Stack<Integer> integers;
     public Stack<String> instructions;
     public Stack<String> userInstructions;
+    public Queue<Integer> queueOfIntegers;
+
+    public HashMap<String, singleInstruction> listOfInstructions;
 
 
     public ForthEvaluator()
@@ -16,7 +18,46 @@ public class ForthEvaluator
         integers = new Stack<>();
         instructions = new Stack<>();
         userInstructions = new Stack<>();
+
+        //queueOfIntegers.remove();
+
+        listOfInstructions = new HashMap<>();
+
+
+        singleInstruction duplicate = (int a) ->
+        {
+            ArrayList<Integer> meow = new ArrayList<>();
+            meow.add(a);
+            meow.add(a);
+            return meow;
+        };
+
+        twoInstruction add = (int a, int b) ->
+        {
+            ArrayList<Integer> meow = new ArrayList<>();
+            meow.add(a + b);
+            return meow;
+        };
+
+        twoInstruction divide = (int a, int b) ->
+        {
+            ArrayList<Integer> meow = new ArrayList<>();
+            meow.add(a / b);
+            return meow;
+        };
+
+        twoInstruction minus = (int a, int b) ->
+        {
+            ArrayList<Integer> meow = new ArrayList<>();
+            meow.add(a - b);
+            return meow;
+        };
+
+
+
     }
+
+    private void userInstructionsParser()
 
     private void parser(String aLine)
     {
@@ -66,6 +107,16 @@ public class ForthEvaluator
     public interface checkWord
     {
         boolean processLine(String aLine);
+    }
+
+    public interface singleInstruction
+    {
+        List processInstruction(int a);
+    }
+
+    public interface twoInstruction
+    {
+        List processInstruction(int a, int b);
     }
 
     public List evaluateProgram(List aList)

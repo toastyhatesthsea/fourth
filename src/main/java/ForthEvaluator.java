@@ -7,7 +7,7 @@ public class ForthEvaluator
 
     public Stack<Integer> integers;
     public Stack<String> instructions;
-    public Stack<String> userInstructions;
+    public Queue<String> userInstructions;
     public Queue<Integer> queueOfIntegers;
 
     public HashMap<String, singleInstruction> listOfInstructions;
@@ -17,7 +17,7 @@ public class ForthEvaluator
     {
         integers = new Stack<>();
         instructions = new Stack<>();
-        userInstructions = new Stack<>();
+        userInstructions = new LinkedList<>();
 
         //queueOfIntegers.remove();
 
@@ -57,7 +57,37 @@ public class ForthEvaluator
 
     }
 
-    private void userInstructionsParser()
+    private void userInstructionsParser(String aLine) throws IllegalArgumentException
+    {
+        Scanner aScan = new Scanner(aLine);
+        String nameOfInstruction = "";
+        int count = 0;
+        Queue<String> instructions = new LinkedList<>();
+
+        while (aScan.hasNext())
+        {
+            String instruction = aScan.next();
+
+            if (!instruction.equals(":") && !instruction.equals(";"))
+            {
+                if (count == 1)
+                {
+                    nameOfInstruction = instruction;
+                }
+                else
+                {
+                    instructions.add(instruction);
+                }
+            }
+            count++;
+        }
+
+        while (!instructions.isEmpty())
+        {
+
+        }
+
+    }
 
     private void parser(String aLine)
     {
@@ -137,6 +167,11 @@ public class ForthEvaluator
 
 }
 
+
+class Instruction
+{
+    
+}
 
 
 

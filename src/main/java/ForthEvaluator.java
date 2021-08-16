@@ -1,58 +1,30 @@
-import javax.naming.PartialResultException;
 import java.lang.reflect.Array;
 import java.util.*;
 
 public class ForthEvaluator
 {
 
-    public Stack<Integer> integers;
-    public Stack<String> instructions;
+    public Queue<Integer> integers;
+    public Queue<String> instructions;
     public Queue<String> userInstructions;
     public Queue<Integer> queueOfIntegers;
 
-    public HashMap<String, singleInstruction> listOfInstructions;
+    public HashMap<String, Instruction> listOfInstructions;
 
 
     public ForthEvaluator()
     {
-        integers = new Stack<>();
-        instructions = new Stack<>();
+        integers = new LinkedList<>();
+        instructions = new LinkedList<>();
         userInstructions = new LinkedList<>();
 
         //queueOfIntegers.remove();
 
         listOfInstructions = new HashMap<>();
 
-
-        singleInstruction duplicate = (int a) ->
-        {
-            ArrayList<Integer> meow = new ArrayList<>();
-            meow.add(a);
-            meow.add(a);
-            return meow;
-        };
-
-        twoInstruction add = (int a, int b) ->
-        {
-            ArrayList<Integer> meow = new ArrayList<>();
-            meow.add(a + b);
-            return meow;
-        };
-
-        twoInstruction divide = (int a, int b) ->
-        {
-            ArrayList<Integer> meow = new ArrayList<>();
-            meow.add(a / b);
-            return meow;
-        };
-
-        twoInstruction minus = (int a, int b) ->
-        {
-            ArrayList<Integer> meow = new ArrayList<>();
-            meow.add(a - b);
-            return meow;
-        };
-
+        listOfInstructions.put("+", new TwoInstruction("Add", TwoInstruction.add));
+        listOfInstructions.put("-", new TwoInstruction("Minus", TwoInstruction.minus));
+        listOfInstructions.put("/", new TwoInstruction("Divide", TwoInstruction.divide));
 
 
     }
@@ -73,8 +45,7 @@ public class ForthEvaluator
                 if (count == 1)
                 {
                     nameOfInstruction = instruction;
-                }
-                else
+                } else
                 {
                     instructions.add(instruction);
                 }
@@ -111,14 +82,26 @@ public class ForthEvaluator
             } else
             {
                 checkWord someChecker = (String someWord) -> (true);
-                process(aLine, someChecker, integers);
+                //process(aLine, someChecker, integers);
+                processRegularInstruction(aLine, someChecker);
                 done = true;
             }
         }
 
     }
 
-    public void process(String aLine, checkWord aChecker, Stack aStack)
+    public List<Integer> evaluate()
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+        while (!this.integers.isEmpty())
+        {
+            String data = this.integers.
+        }
+
+        return answer;
+    }
+
+    public void process(String aLine, checkWord aChecker, Queue aStack)
     {
         Scanner aScan = new Scanner(aLine);
 
@@ -128,8 +111,28 @@ public class ForthEvaluator
 
             if (aChecker.processLine(aWord))
             {
-                aStack.push(aWord);
+                aStack.add(aWord);
             }
+        }
+    }
+
+    public void processRegularInstruction(String line, checkWord aChecker)
+    {
+        Scanner aScan = new Scanner(line);
+
+        while (aScan.hasNext())
+        {
+            String word = aScan.next();
+
+            try
+            {
+                Integer anInt = Integer.parseInt(word);
+                this.integers.add(anInt);
+            } catch (Exception e)
+            {
+
+            }
+
         }
     }
 
@@ -139,15 +142,6 @@ public class ForthEvaluator
         boolean processLine(String aLine);
     }
 
-    public interface singleInstruction
-    {
-        List processInstruction(int a);
-    }
-
-    public interface twoInstruction
-    {
-        List processInstruction(int a, int b);
-    }
 
     public List evaluateProgram(List aList)
     {
@@ -168,10 +162,140 @@ public class ForthEvaluator
 }
 
 
-class Instruction
+interface singleInstruction
 {
-    
+    List processInstruction(int a);
 }
 
+interface twoInstructions
+{
+    List processInstruction(int a, int b);
+}
+
+interface threeInstruction extends singleInstruction
+{
+    List processInstruction(int a, int b, int c);
+}
+
+
+
+abstract class Instruction
+{
+    String name;
+    Queue<String> multipleInstructions;
+
+
+    public Instruction(String aName, Queue<String> aMultipleInstructions)
+    {
+        this.multipleInstructions = aMultipleInstructions;
+        this.name = aName;
+    }
+
+    public Instruction(String aName)
+    {
+
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Queue<String> getMultipleInstructions()
+    {
+        return multipleInstructions;
+    }
+
+    public void setMultipleInstructions(Queue<String> multipleInstructions)
+    {
+        this.multipleInstructions = multipleInstructions;
+    }
+
+    abstract public List<Integer> processInstruction();
+}
+
+
+class UserInstruction extends Instruction
+{
+    public UserInstruction(String aName, Queue<String> instructions)
+    {
+        super(aName, instructions);
+    }
+
+    @Override
+    public List<Integer> processInstruction()
+    {
+        return null;
+    }
+}
+
+class TwoInstruction extends Instruction
+{
+    twoInstructions anInstruction;
+
+    @Override
+    public List<Integer> processInstruction()
+    {
+        return null;
+    }
+
+    public static twoInstructions add = (int a, int b) ->
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+        answer.add(a + b);
+        return answer;
+    };
+
+    public static twoInstructions minus = (int a, int b) ->
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+        answer.add(a - b);
+        return answer;
+    };
+
+    public static twoInstructions divide = (int a, int b) ->
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+        answer.add(a / b);
+        return answer;
+    };
+
+
+
+    public TwoInstruction(String aName, twoInstructions aFunc)
+    {
+        super(aName);
+        this.anInstruction = aFunc;
+    }
+}
+
+class SingleInstruction extends Instruction
+{
+    singleInstruction duplicate = (int a) ->
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+
+        answer.add(a);
+        answer.add(a);
+
+        return answer;
+    };
+
+    public SingleInstruction(String aName, Queue<String> aMultipleInstructions)
+    {
+        super(aName, aMultipleInstructions);
+    }
+
+    @Override
+    public List<Integer> processInstruction()
+    {
+        return null;
+    }
+}
 
 

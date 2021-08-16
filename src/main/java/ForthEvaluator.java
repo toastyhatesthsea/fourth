@@ -93,9 +93,13 @@ public class ForthEvaluator
     public List<Integer> evaluate()
     {
         ArrayList<Integer> answer = new ArrayList<>();
-        while (!this.integers.isEmpty())
+        while (!this.instructions.isEmpty())
         {
-            String data = this.integers.
+            String data = this.instructions.remove();
+
+            Instruction anInstruction = this.listOfInstructions.get(data);
+
+            anInstruction.processInstruction(this.integers);
         }
 
         return answer;
@@ -130,9 +134,8 @@ public class ForthEvaluator
                 this.integers.add(anInt);
             } catch (Exception e)
             {
-
+                this.instructions.add(word);
             }
-
         }
     }
 
@@ -149,14 +152,15 @@ public class ForthEvaluator
 
         for (Object aLine : aList)
         {
-            //TODO Must implement parser for regular instructions
+            //TODO Must check for errors of using instructions that require two arguments
             String line = (String) aLine;
             parser(line);
+            evaluate();
         }
 
         //Scanner aScan = new Scanner(aList);
 
-        return answer;
+        return (List) this.integers;
     }
 
 }
@@ -216,7 +220,7 @@ abstract class Instruction
         this.multipleInstructions = multipleInstructions;
     }
 
-    abstract public List<Integer> processInstruction();
+    abstract public List<Integer> processInstruction(Queue<Integer> aQueue);
 }
 
 
@@ -228,7 +232,7 @@ class UserInstruction extends Instruction
     }
 
     @Override
-    public List<Integer> processInstruction()
+    public List<Integer> processInstruction(Queue<Integer> someIntegers)
     {
         return null;
     }
@@ -239,9 +243,14 @@ class TwoInstruction extends Instruction
     twoInstructions anInstruction;
 
     @Override
-    public List<Integer> processInstruction()
+    public List<Integer> processInstruction(Queue<Integer> aQueue)
     {
-        return null;
+        Integer intOne = aQueue.remove();
+        Integer intTwo = aQueue.remove();
+
+        List<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
+        aQueue.addAll(answer);
+        return answer;
     }
 
     public static twoInstructions add = (int a, int b) ->
@@ -292,7 +301,7 @@ class SingleInstruction extends Instruction
     }
 
     @Override
-    public List<Integer> processInstruction()
+    public List<Integer> processInstruction(Queue<Integer> someIntegers)
     {
         return null;
     }

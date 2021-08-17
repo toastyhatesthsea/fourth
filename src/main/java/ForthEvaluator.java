@@ -22,9 +22,10 @@ public class ForthEvaluator
 
         listOfInstructions = new HashMap<>();
 
-        listOfInstructions.put("+", new TwoInstruction("Add", TwoInstruction.add));
-        listOfInstructions.put("-", new TwoInstruction("Minus", TwoInstruction.minus));
+        listOfInstructions.put("+", new TwoInstruction("Addition", TwoInstruction.add));
+        listOfInstructions.put("-", new TwoInstruction("Subtraction", TwoInstruction.minus));
         listOfInstructions.put("/", new TwoInstruction("Divide", TwoInstruction.divide));
+        listOfInstructions.put("*", new TwoInstruction("Multiplication", TwoInstruction.multiply));
 
 
     }
@@ -182,7 +183,6 @@ interface threeInstruction extends singleInstruction
 }
 
 
-
 abstract class Instruction
 {
     String name;
@@ -197,7 +197,7 @@ abstract class Instruction
 
     public Instruction(String aName)
     {
-
+        this.name = aName;
     }
 
     public String getName()
@@ -243,14 +243,24 @@ class TwoInstruction extends Instruction
     twoInstructions anInstruction;
 
     @Override
-    public List<Integer> processInstruction(Queue<Integer> aQueue)
+    public List<Integer> processInstruction(Queue<Integer> aQueue) throws IllegalArgumentException
     {
-        Integer intOne = aQueue.remove();
-        Integer intTwo = aQueue.remove();
+        Integer intOne;
+        Integer intTwo;
+        try
+        {
+            intOne = aQueue.remove();
+            intTwo = aQueue.remove();
 
-        List<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
-        aQueue.addAll(answer);
-        return answer;
+            List<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
+            aQueue.addAll(answer);
+            return answer;
+        } catch (Exception e)
+        {
+            IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
+                    "that the stack contain at least 2 values");
+            throw meow;
+        }
     }
 
     public static twoInstructions add = (int a, int b) ->
@@ -274,6 +284,12 @@ class TwoInstruction extends Instruction
         return answer;
     };
 
+    public static twoInstructions multiply = (int a, int b) ->
+    {
+        ArrayList<Integer> answer = new ArrayList<>();
+        answer.add(a * b);
+        return answer;
+    };
 
 
     public TwoInstruction(String aName, twoInstructions aFunc)

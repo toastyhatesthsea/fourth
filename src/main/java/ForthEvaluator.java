@@ -28,7 +28,7 @@ public class ForthEvaluator
 
         SingleInstruction single = new SingleInstruction("rawr", SingleInstruction.duplicate);
 
-        listOfInstructions.put("dup", new SingleInstruction("Duplication", SingleInstruction.duplicate));
+        listOfInstructions.put("dup", new SingleInstruction("Duplicating", SingleInstruction.duplicate));
 
 
     }
@@ -76,7 +76,6 @@ public class ForthEvaluator
             Stack aStack = new Stack();
 
 
-
             if (data.equals(":"))
             {
                 userInstruction = true;
@@ -90,7 +89,8 @@ public class ForthEvaluator
             {
                 checkWord someChecker = (String someWord) -> (true);
                 //process(aLine, someChecker, integers);
-                processRegularInstruction(aLine, someChecker);
+                //processRegularInstruction(aLine, someChecker);
+                processRegularInstructionPartTwo(aLine, someChecker);
                 done = true;
             }
         }
@@ -106,7 +106,7 @@ public class ForthEvaluator
 
             Instruction anInstruction = this.listOfInstructions.get(data);
 
-            this.integers = (Stack<Integer>)anInstruction.processInstruction(this.integers);
+            this.integers = (Stack<Integer>) anInstruction.processInstruction(this.integers);
         }
 
         return answer;
@@ -152,15 +152,17 @@ public class ForthEvaluator
 
         while (aScan.hasNext())
         {
-            String word = aScan.next();
+            String data = aScan.next();
 
             try
             {
-                Integer anInt = Integer.parseInt(word);
+                Integer anInt = Integer.parseInt(data);
                 this.integers.add(anInt);
             } catch (Exception e)
             {
-                this.instructions.add(word);
+                Instruction anInstruction = this.listOfInstructions.get(data);
+                Stack<Integer> answer = (Stack<Integer>) anInstruction.processInstruction(this.integers);
+                this.integers.addAll(answer);
             }
         }
     }
@@ -181,7 +183,7 @@ public class ForthEvaluator
             //TODO Must check for errors of using instructions that require two arguments
             String line = (String) aLine;
             parser(line);
-            evaluate();
+            //evaluate();
         }
 
         //Scanner aScan = new Scanner(aList);
@@ -194,7 +196,7 @@ public class ForthEvaluator
 
 interface singleInstructions
 {
-    Stack processInstruction(Stack<Integer> aStack);
+    Stack processInstruction(int a);
 }
 
 interface twoInstructions
@@ -245,7 +247,7 @@ abstract class Instruction
         this.multipleInstructions = multipleInstructions;
     }
 
-    abstract public List<Integer> processInstruction(Stack<Integer> aQueue);
+    abstract public List<Integer> processInstruction(Stack<Integer> aStack);
 }
 
 
@@ -274,12 +276,12 @@ class TwoInstruction extends Instruction
         Integer intTwo;
         try
         {
-            intOne = aStack.remove(0);
-            intTwo = aStack.remove(0);
+            intOne = aStack.pop();
+            intTwo = aStack.pop();
 
             Stack<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
 
-            answer.addAll(aStack);
+            //aStack.addAll(answer);
 
             return answer;
         } catch (NullPointerException e)
@@ -287,7 +289,7 @@ class TwoInstruction extends Instruction
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
                     "that the stack contain at least 2 values");
             throw meow;
-        } catch (Exception e)
+        } catch (ArrayIndexOutOfBoundsException e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
                     "that the stack contain at least 2 values");
@@ -343,15 +345,14 @@ class SingleInstruction extends Instruction
 {
     singleInstructions anInstruction;
 
-    public static singleInstructions duplicate = (Stack<Integer> aStack) ->
+    public static singleInstructions duplicate = (int anInt) ->
     {
         Stack<Integer> answer = new Stack<>();
 
-        Integer topOfStackInteger = aStack.peek();
+        answer.push(anInt);
+        answer.push(anInt);
 
-        aStack.push(topOfStackInteger);
-
-        return aStack;
+        return answer;
     };
 
     public SingleInstruction(String aName, singleInstructions aFunc)
@@ -367,22 +368,20 @@ class SingleInstruction extends Instruction
 
         try
         {
-            intOne = someIntegers.remove(0);
+            intOne = someIntegers.pop();
 
-            Stack<Integer> answer = anInstruction.processInstruction(someIntegers);
-
-            answer.addAll(someIntegers);
+            Stack<Integer> answer = anInstruction.processInstruction(intOne);
 
             return answer;
         } catch (NullPointerException e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
-                    "that the stack contain at least 2 values");
+                    "that the stack contain at least 1 value");
             throw meow;
-        } catch (Exception e)
+        } catch (EmptyStackException e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
-                    "that the stack contain at least 2 values");
+                    "that the stack contain at least 1 value");
             throw meow;
         }
     }

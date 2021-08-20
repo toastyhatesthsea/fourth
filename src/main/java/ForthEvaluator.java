@@ -1,11 +1,10 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class ForthEvaluator
 {
 
-    public Queue<Integer> integers;
-    public Queue<String> instructions;
+    public Stack<Integer> integers;
+    public Stack<String> instructions;
     public Queue<String> userInstructions;
     public Queue<Integer> queueOfIntegers;
 
@@ -14,8 +13,8 @@ public class ForthEvaluator
 
     public ForthEvaluator()
     {
-        integers = new LinkedList<>();
-        instructions = new LinkedList<>();
+        integers = new Stack<>();
+        instructions = new Stack<>();
         userInstructions = new LinkedList<>();
 
         //queueOfIntegers.remove();
@@ -24,8 +23,12 @@ public class ForthEvaluator
 
         listOfInstructions.put("+", new TwoInstruction("Addition", TwoInstruction.add));
         listOfInstructions.put("-", new TwoInstruction("Subtraction", TwoInstruction.minus));
-        listOfInstructions.put("/", new TwoInstruction("Divide", TwoInstruction.divide));
+        listOfInstructions.put("/", new TwoInstruction("Division", TwoInstruction.divide));
         listOfInstructions.put("*", new TwoInstruction("Multiplication", TwoInstruction.multiply));
+
+        SingleInstruction single = new SingleInstruction("rawr", SingleInstruction.duplicate);
+
+        listOfInstructions.put("dup", new SingleInstruction("Duplication", SingleInstruction.duplicate));
 
 
     }
@@ -70,6 +73,9 @@ public class ForthEvaluator
         while (aScan.hasNext() && !done)
         {
             String data = aScan.next();
+            Stack aStack = new Stack();
+
+
 
             if (data.equals(":"))
             {
@@ -96,11 +102,11 @@ public class ForthEvaluator
         ArrayList<Integer> answer = new ArrayList<>();
         while (!this.instructions.isEmpty())
         {
-            String data = this.instructions.remove();
+            String data = this.instructions.remove(0);
 
             Instruction anInstruction = this.listOfInstructions.get(data);
 
-            anInstruction.processInstruction(this.integers);
+            this.integers = (Stack<Integer>)anInstruction.processInstruction(this.integers);
         }
 
         return answer;
@@ -122,6 +128,25 @@ public class ForthEvaluator
     }
 
     public void processRegularInstruction(String line, checkWord aChecker)
+    {
+        Scanner aScan = new Scanner(line);
+
+        while (aScan.hasNext())
+        {
+            String word = aScan.next();
+
+            try
+            {
+                Integer anInt = Integer.parseInt(word);
+                this.integers.add(anInt);
+            } catch (Exception e)
+            {
+                this.instructions.add(word);
+            }
+        }
+    }
+
+    public void processRegularInstructionPartTwo(String line, checkWord aChecker)
     {
         Scanner aScan = new Scanner(line);
 
@@ -167,17 +192,17 @@ public class ForthEvaluator
 }
 
 
-interface singleInstruction
+interface singleInstructions
 {
-    List processInstruction(int a);
+    Stack processInstruction(Stack<Integer> aStack);
 }
 
 interface twoInstructions
 {
-    List processInstruction(int a, int b);
+    Stack processInstruction(int a, int b);
 }
 
-interface threeInstruction extends singleInstruction
+interface threeInstruction extends singleInstructions
 {
     List processInstruction(int a, int b, int c);
 }
@@ -220,7 +245,7 @@ abstract class Instruction
         this.multipleInstructions = multipleInstructions;
     }
 
-    abstract public List<Integer> processInstruction(Queue<Integer> aQueue);
+    abstract public List<Integer> processInstruction(Stack<Integer> aQueue);
 }
 
 
@@ -232,7 +257,7 @@ class UserInstruction extends Instruction
     }
 
     @Override
-    public List<Integer> processInstruction(Queue<Integer> someIntegers)
+    public List<Integer> processInstruction(Stack<Integer> someIntegers)
     {
         return null;
     }
@@ -243,50 +268,65 @@ class TwoInstruction extends Instruction
     twoInstructions anInstruction;
 
     @Override
-    public List<Integer> processInstruction(Queue<Integer> aQueue) throws IllegalArgumentException
+    public List<Integer> processInstruction(Stack<Integer> aStack) throws IllegalArgumentException
     {
         Integer intOne;
         Integer intTwo;
         try
         {
-            intOne = aQueue.remove();
-            intTwo = aQueue.remove();
+            intOne = aStack.remove(0);
+            intTwo = aStack.remove(0);
 
-            List<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
-            aQueue.addAll(answer);
+            Stack<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
+
+            answer.addAll(aStack);
+
             return answer;
+        } catch (NullPointerException e)
+        {
+            IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
+                    "that the stack contain at least 2 values");
+            throw meow;
         } catch (Exception e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
                     "that the stack contain at least 2 values");
             throw meow;
         }
+
     }
 
     public static twoInstructions add = (int a, int b) ->
     {
-        ArrayList<Integer> answer = new ArrayList<>();
+        Stack<Integer> answer = new Stack<>();
         answer.add(a + b);
         return answer;
     };
 
     public static twoInstructions minus = (int a, int b) ->
     {
-        ArrayList<Integer> answer = new ArrayList<>();
+        Stack<Integer> answer = new Stack<>();
         answer.add(a - b);
         return answer;
     };
 
     public static twoInstructions divide = (int a, int b) ->
     {
-        ArrayList<Integer> answer = new ArrayList<>();
-        answer.add(a / b);
+        Stack<Integer> answer = new Stack<>();
+        try
+        {
+            answer.add(a / b);
+        } catch (ArithmeticException e)
+        {
+            IllegalArgumentException meow = new IllegalArgumentException("Division by 0 is not allowed");
+            throw meow;
+        }
         return answer;
     };
 
     public static twoInstructions multiply = (int a, int b) ->
     {
-        ArrayList<Integer> answer = new ArrayList<>();
+        Stack<Integer> answer = new Stack<>();
         answer.add(a * b);
         return answer;
     };
@@ -301,25 +341,60 @@ class TwoInstruction extends Instruction
 
 class SingleInstruction extends Instruction
 {
-    singleInstruction duplicate = (int a) ->
+    singleInstructions anInstruction;
+
+    public static singleInstructions duplicate = (Stack<Integer> aStack) ->
     {
-        ArrayList<Integer> answer = new ArrayList<>();
+        Stack<Integer> answer = new Stack<>();
 
-        answer.add(a);
-        answer.add(a);
+        Integer topOfStackInteger = aStack.peek();
 
-        return answer;
+        aStack.push(topOfStackInteger);
+
+        return aStack;
     };
 
-    public SingleInstruction(String aName, Queue<String> aMultipleInstructions)
+    public SingleInstruction(String aName, singleInstructions aFunc)
     {
-        super(aName, aMultipleInstructions);
+        super(aName);
+        this.anInstruction = aFunc;
     }
 
     @Override
-    public List<Integer> processInstruction(Queue<Integer> someIntegers)
+    public List<Integer> processInstruction(Stack<Integer> someIntegers)
     {
-        return null;
+        Integer intOne;
+
+        try
+        {
+            intOne = someIntegers.remove(0);
+
+            Stack<Integer> answer = anInstruction.processInstruction(someIntegers);
+
+            answer.addAll(someIntegers);
+
+            return answer;
+        } catch (NullPointerException e)
+        {
+            IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
+                    "that the stack contain at least 2 values");
+            throw meow;
+        } catch (Exception e)
+        {
+            IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +
+                    "that the stack contain at least 2 values");
+            throw meow;
+        }
+    }
+
+    public singleInstructions getAnInstruction()
+    {
+        return anInstruction;
+    }
+
+    public void setAnInstruction(singleInstructions anInstruction)
+    {
+        this.anInstruction = anInstruction;
     }
 }
 

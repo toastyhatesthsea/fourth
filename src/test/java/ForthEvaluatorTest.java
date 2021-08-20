@@ -230,7 +230,7 @@ public class ForthEvaluatorTest {
                 "Duplicating requires that the stack contain at least 1 value");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testDropRemovesTheTopValueOnTheStackIfItIsTheOnlyOne() {
         assertEquals(
@@ -238,7 +238,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 drop")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testDropRemovesTheTopValueOnTheStackIfItIsNotTheOnlyOne() {
         assertEquals(
@@ -246,7 +246,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 drop")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfDroppingAttemptedWithNothingOnTheStack() {
         IllegalArgumentException expected =

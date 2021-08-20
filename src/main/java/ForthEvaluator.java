@@ -29,6 +29,7 @@ public class ForthEvaluator
         SingleInstruction single = new SingleInstruction("rawr", SingleInstruction.duplicate);
 
         listOfInstructions.put("dup", new SingleInstruction("Duplicating", SingleInstruction.duplicate));
+        listOfInstructions.put("drop", new SingleInstruction("Dropping", SingleInstruction.drop));
 
 
     }
@@ -352,6 +353,12 @@ class SingleInstruction extends Instruction
         answer.push(anInt);
         answer.push(anInt);
 
+        return answer;
+    };
+
+    public static singleInstructions drop = (int anInt) ->
+    {
+        Stack<Integer> answer = new Stack<>();
         return answer;
     };
 

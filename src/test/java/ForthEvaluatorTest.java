@@ -260,7 +260,7 @@ public class ForthEvaluatorTest {
                 "Dropping requires that the stack contain at least 1 value");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testSwapSwapsTheTopTwosValueOnTheStackIfTheyAreTheOnlyOnes() {
         assertEquals(
@@ -268,7 +268,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 swap")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testSwapSwapsTheTopTwosValueOnTheStackIfTheyAreNotTheOnlyOnes() {
         assertEquals(
@@ -276,7 +276,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 3 swap")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfSwappingAttemptedWithNothingOnTheStack() {
         IllegalArgumentException expected =
@@ -290,7 +290,7 @@ public class ForthEvaluatorTest {
                 "Swapping requires that the stack contain at least 2 values");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfSwappingAttemptedWithOneNumberOnTheStack() {
         IllegalArgumentException expected =
@@ -304,7 +304,7 @@ public class ForthEvaluatorTest {
                 "Swapping requires that the stack contain at least 2 values");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testOverCopiesTheSecondElementIfThereAreOnlyTwo() {
         assertEquals(
@@ -312,7 +312,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 over")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testOverCopiesTheSecondElementIfThereAreMoreThanTwo() {
         assertEquals(
@@ -320,7 +320,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 3 over")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfOveringAttemptedWithNothingOnTheStack() {
         IllegalArgumentException expected =
@@ -334,7 +334,7 @@ public class ForthEvaluatorTest {
                 "Overing requires that the stack contain at least 2 values");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfOveringAttemptedWithOneNumberOnTheStack() {
         IllegalArgumentException expected =
@@ -348,7 +348,7 @@ public class ForthEvaluatorTest {
                 "Overing requires that the stack contain at least 2 values");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testUserDefinedOperatorsCanConsistOfBuiltInOperators() {
         assertEquals(
@@ -453,7 +453,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 SWAP 3 Swap 4 swap")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testOverIsCaseInsensitive() {
         assertEquals(
@@ -461,7 +461,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 OVER Over over")));
     }
 
-    //@Ignore("Remove to run test")
+    @Ignore("Remove to run test")
     @Test
     public void testUserDefinedWordsAreCaseInsensitive() {
         assertEquals(

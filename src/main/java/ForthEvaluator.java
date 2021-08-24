@@ -25,6 +25,9 @@ public class ForthEvaluator
         listOfInstructions.put("-", new TwoInstruction("Subtraction", TwoInstruction.minus));
         listOfInstructions.put("/", new TwoInstruction("Division", TwoInstruction.divide));
         listOfInstructions.put("*", new TwoInstruction("Multiplication", TwoInstruction.multiply));
+        listOfInstructions.put("swap", new TwoInstruction("Swapping", TwoInstruction.swap));
+        listOfInstructions.put("over", new TwoInstruction("Overing", TwoInstruction.over));
+
 
         SingleInstruction single = new SingleInstruction("rawr", SingleInstruction.duplicate);
 
@@ -34,7 +37,7 @@ public class ForthEvaluator
 
     }
 
-    private void userInstructionsParser(String aLine) throws IllegalArgumentException
+    private void userInstructionsParser(String aLine, checkWord someChecker) throws IllegalArgumentException
     {
         Scanner aScan = new Scanner(aLine);
         String nameOfInstruction = "";
@@ -58,10 +61,8 @@ public class ForthEvaluator
             count++;
         }
 
-        while (!instructions.isEmpty())
-        {
+        this.listOfInstructions.put(nameOfInstruction, new UserInstruction(nameOfInstruction, instructions, this.listOfInstructions));
 
-        }
 
     }
 
@@ -84,7 +85,7 @@ public class ForthEvaluator
             {
                 checkWord someChecker = (String someWord) -> (!someWord.equals(";") && !someWord.equals(":"));
 
-                process(aLine, someChecker, userInstructions);
+                userInstructionsParser(aLine, someChecker);
                 done = true;
             } else
             {
@@ -161,7 +162,7 @@ public class ForthEvaluator
                 this.integers.add(anInt);
             } catch (Exception e)
             {
-                Instruction anInstruction = this.listOfInstructions.get(data);
+                Instruction anInstruction = this.listOfInstructions.get(data.toLowerCase());
                 Stack<Integer> answer = (Stack<Integer>) anInstruction.processInstruction(this.integers);
                 this.integers.addAll(answer);
             }
@@ -212,15 +213,30 @@ interface threeInstruction extends singleInstructions
 
 class UserInstruction extends Instruction
 {
-    public UserInstruction(String aName, Queue<String> instructions)
+    HashMap<String, Instruction> instructionList;
+
+    public UserInstruction(String aName, Queue<String> instructions, HashMap listOfInstructions)
     {
         super(aName, instructions);
+
+        instructionList = listOfInstructions;
     }
 
     @Override
     public List<Integer> processInstruction(Stack<Integer> someIntegers)
     {
-        return null;
+
+        Stack<Integer> answer = new Stack<>();
+
+        for (String aString : super.multipleInstructions)
+        {
+            Instruction anInstruction = instructionList.get(aString);
+
+            answer.addAll(anInstruction.processInstruction(someIntegers));
+        }
+        //TODO Must fix duplication
+
+        return answer;
     }
 }
 

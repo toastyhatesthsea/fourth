@@ -30,7 +30,7 @@ class SingleInstruction extends Instruction
     }
 
     @Override
-    public List<Integer> processInstruction(Stack<Integer> someIntegers)
+    public void processInstruction(Stack<Integer> someIntegers)
     {
         Integer intOne;
 
@@ -38,9 +38,8 @@ class SingleInstruction extends Instruction
         {
             intOne = someIntegers.pop();
 
-            Stack<Integer> answer = anInstruction.processInstruction(intOne);
+            someIntegers.addAll(anInstruction.processInstruction(intOne));
 
-            return answer;
         } catch (NullPointerException e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +

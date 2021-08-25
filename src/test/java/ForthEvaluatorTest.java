@@ -356,7 +356,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": dup-twice dup dup ;", "1 dup-twice")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testUserDefinedOperatorsAreEvaluatedInTheCorrectOrder() {
         assertEquals(
@@ -364,7 +364,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": countup 1 2 3 ;", "countup")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCanRedefineAUserDefinedOperator() {
         assertEquals(

@@ -108,7 +108,7 @@ public class ForthEvaluator
 
             Instruction anInstruction = this.listOfInstructions.get(data);
 
-            this.integers = (Stack<Integer>) anInstruction.processInstruction(this.integers);
+            anInstruction.processInstruction(this.integers);
         }
 
         return answer;
@@ -163,8 +163,7 @@ public class ForthEvaluator
             } catch (Exception e)
             {
                 Instruction anInstruction = this.listOfInstructions.get(data.toLowerCase());
-                Stack<Integer> answer = (Stack<Integer>) anInstruction.processInstruction(this.integers);
-                this.integers.addAll(answer);
+                anInstruction.processInstruction(this.integers);
             }
         }
     }
@@ -209,35 +208,6 @@ interface twoInstructions
 interface threeInstruction extends singleInstructions
 {
     List processInstruction(int a, int b, int c);
-}
-
-class UserInstruction extends Instruction
-{
-    HashMap<String, Instruction> instructionList;
-
-    public UserInstruction(String aName, Queue<String> instructions, HashMap listOfInstructions)
-    {
-        super(aName, instructions);
-
-        instructionList = listOfInstructions;
-    }
-
-    @Override
-    public List<Integer> processInstruction(Stack<Integer> someIntegers)
-    {
-
-        Stack<Integer> answer = new Stack<>();
-
-        for (String aString : super.multipleInstructions)
-        {
-            Instruction anInstruction = instructionList.get(aString);
-
-            answer.addAll(anInstruction.processInstruction(someIntegers));
-        }
-        //TODO Must fix duplication
-
-        return answer;
-    }
 }
 
 

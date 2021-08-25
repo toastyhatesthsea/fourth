@@ -40,7 +40,7 @@ abstract class Instruction
         this.multipleInstructions = multipleInstructions;
     }
 
-    abstract public List<Integer> processInstruction(Stack<Integer> aStack);
+    abstract public void processInstruction(Stack<Integer> aStack);
 }
 
 

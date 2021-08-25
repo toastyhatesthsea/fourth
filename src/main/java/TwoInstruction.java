@@ -8,7 +8,7 @@ class TwoInstruction extends Instruction
     twoInstructions anInstruction;
 
     @Override
-    public List<Integer> processInstruction(Stack<Integer> aStack) throws IllegalArgumentException
+    public void processInstruction(Stack<Integer> aStack) throws IllegalArgumentException
     {
         Integer intOne;
         Integer intTwo;
@@ -17,11 +17,8 @@ class TwoInstruction extends Instruction
             intTwo = aStack.pop();
             intOne = aStack.pop();
 
-            Stack<Integer> answer = anInstruction.processInstruction(intOne, intTwo);
+            aStack.addAll(anInstruction.processInstruction(intOne, intTwo));
 
-            //aStack.addAll(answer);
-
-            return answer;
         } catch (NullPointerException e)
         {
             IllegalArgumentException meow = new IllegalArgumentException(this.getName() + " requires " +

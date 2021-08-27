@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class ForthEvaluator
 {
@@ -50,12 +51,27 @@ public class ForthEvaluator
 
             if (!instruction.equals(":") && !instruction.equals(";"))
             {
-                if (count == 1)
+                if (count == 1) //
                 {
-                    nameOfInstruction = instruction;
+                    if (isInteger(instruction))
+                    {
+                        throw new IllegalArgumentException("Cannot redefine numbers");
+                    } else
+                    {
+                        nameOfInstruction = instruction.toLowerCase();
+                    }
+
                 } else
                 {
-                    instructions.add(instruction);
+                    Instruction instructionFromList = this.listOfInstructions.get(instruction);
+
+                    if (instructionFromList != null && instructionFromList.getClass() == UserInstruction.class)
+                    {
+                        instructions.addAll(instructionFromList.multipleInstructions);
+                    } else
+                    {
+                        instructions.add(instruction.toLowerCase());
+                    }
                 }
             }
             count++;
@@ -64,6 +80,18 @@ public class ForthEvaluator
         this.listOfInstructions.put(nameOfInstruction, new UserInstruction(nameOfInstruction, instructions, this.listOfInstructions));
 
 
+    }
+
+    public boolean isInteger(String anInt)
+    {
+        try
+        {
+            Integer.parseInt(anInt);
+            return true;
+        } catch (Exception e)
+        {
+            return false;
+        }
     }
 
     private void parser(String aLine)
@@ -163,6 +191,12 @@ public class ForthEvaluator
             } catch (Exception e)
             {
                 Instruction anInstruction = this.listOfInstructions.get(data.toLowerCase());
+
+                if (anInstruction == null)
+                {
+                    throw new IllegalArgumentException("No definition available for operator \"" + data+ "\"");
+                }
+
                 anInstruction.processInstruction(this.integers);
             }
         }

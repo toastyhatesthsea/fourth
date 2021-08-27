@@ -372,7 +372,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": foo dup ;", ": foo dup dup ;", "1 foo")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCanOverrideBuiltInWordOperators() {
         assertEquals(
@@ -380,7 +380,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": swap dup ;", "1 swap")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCanOverrideBuiltInArithmeticOperators() {
         assertEquals(
@@ -388,7 +388,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": + * ;", "3 4 +")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCanUseDifferentWordsWithTheSameName() {
         assertEquals(
@@ -396,15 +396,17 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": foo 5 ;", ": bar foo ;", ": foo 6 ;", "bar foo")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCanDefineWordThatUsesWordWithTheSameName() {
         assertEquals(
                 Collections.singletonList(11),
                 forthEvaluator.evaluateProgram(Arrays.asList(": foo 10 ;", ": foo foo 1 + ;", "foo")));
+        //TODO Must process instructions if they are available
+        //TODO Example. foo foo <---- Must process to 10 first
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testCannotRedefineNumbers() {
         IllegalArgumentException expected =
@@ -416,7 +418,7 @@ public class ForthEvaluatorTest {
         assertThat(expected).hasMessage("Cannot redefine numbers");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testErrorIfEvaluatingAnUndefinedOperator() {
         IllegalArgumentException expected =
@@ -429,7 +431,7 @@ public class ForthEvaluatorTest {
             .hasMessage("No definition available for operator \"foo\"");
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testDupIsCaseInsensitive() {
         assertEquals(
@@ -437,7 +439,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 DUP Dup dup")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testDropIsCaseInsensitive() {
         assertEquals(
@@ -445,7 +447,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 3 4 DROP Drop drop")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testSwapIsCaseInsensitive() {
         assertEquals(
@@ -461,7 +463,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Collections.singletonList("1 2 OVER Over over")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testUserDefinedWordsAreCaseInsensitive() {
         assertEquals(
@@ -469,7 +471,7 @@ public class ForthEvaluatorTest {
                 forthEvaluator.evaluateProgram(Arrays.asList(": foo dup ;", "1 FOO Foo foo")));
     }
 
-    @Ignore("Remove to run test")
+    //@Ignore("Remove to run test")
     @Test
     public void testDefinitionsAreCaseInsensitive() {
         assertEquals(
